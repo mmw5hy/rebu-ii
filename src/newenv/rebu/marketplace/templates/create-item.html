@@ -1,0 +1,47 @@
+<!-- This template renders the page that allows a cook to create a new item to add to their menu. -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                    <div class="card my-5 card-signin login-card">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">Create a New Item</h5>
+                            <form method="post" action="." class="form-signin" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="form-label-group">
+                                    <input type="text" id="name" name="name" class="form-control" placeholder="Name of Item" required autofocus>
+                                    <label class="input-box" for="name">Name of Item</label>
+                                </div>
+
+                                <div class="form-label-group">
+                                    <input type="text" id="ingredients" name="ingredients" class="form-control" placeholder="Ingredients" required autofocus>
+                                    <label class="input-box" for="ingredients">Ingredients</label>
+                                </div>
+
+                                <div class="form-label-group">
+                                    <input type="text" id="description" name="description" class="form-control" placeholder="Description" required autofocus>
+                                    <label class="input-box" for="description">Description</label>
+                                </div>
+
+                                <div class="form-label-group">
+                                    <input type="text" id="price" name="price" class="form-control" placeholder="Price" required autofocus>
+                                    <label class="input-box" for="price">Price</label>
+                                </div>
+
+                                <div class="form-label-group">
+                                    <input type="file" id="image" name="image" class="image-upload" required autofocus>
+                                </div>
+
+                                <button class="btn btn-lg btn-primary btn-block text-uppercase green-button" type="submit" name="submit" value="Login">Add Item</button>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>   
+            </div>
+        </div> 
+{% endblock %}

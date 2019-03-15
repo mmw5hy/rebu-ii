@@ -1,0 +1,71 @@
+<!-- This template renders the page that allows a cook to edit any specific details about any item, including an item's availability. -->
+
+{% extends 'base.html' %}
+{% block content %}
+    <script>
+        function showForm(items) {
+            var s = document.getElementsByName('edit-items-dropdown')[0];
+            var text = s.options[s.selectedIndex].id;
+            var x;
+            for(x = 0; x < items.length; x++) {
+                var id = items[x]["pk"];
+                var formID = "form-" + id
+                if (text != id) {
+                    document.getElementById(formID).style.display = "none";
+                }
+                else {
+                    document.getElementById(formID).style.display = "block";
+                }
+            }
+        }
+    </script>
+    <div class="main-content row"><br>
+        {% if items %}
+            <div class="form-group edit-dropdown">
+                <label for="edit-items-dropdown">Choose an item to edit:</label>
+                <select class="form-control" name="edit-items-dropdown" id="edit-items-dropdown" onchange="showForm({{ itemList }})">
+                    <option>----</option>
+                    {% for item in items %}
+                        <option id="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br><br><br><br><br><br>
+            {% for item in items %}
+                <div class="edit-item-form card-signin login-card" id="form-{{ item.id }}">
+                    <div class="card-body">
+                        <form method="post" action="." class="form-signin">
+                            <div class="form-label-group-edit">
+                                <input id="item_id" name="item_id" type="hidden" value="{{item.id}}" >
+                                Name: <input id="name" name="name" class="form-control-edit" type="text" step="1" min="0"value="{{ item.name }}">
+                            </div>
+
+                            <div class="form-label-group-edit">
+                                Ingredients: <input id="ingredients" name="ingredients" class="form-control-edit" type="text" step="1" min="0"value="{{ item.ingredients }}">
+                            </div>
+
+                            <div class="form-label-group-edit">
+                                Description: <input id="description" name="description" class="form-control-edit" type="text" step="1" min="0"value="{{ item.description }}">
+                            </div>
+
+                            <div class="form-label-group-edit">
+                                Price: <input id="price" name="price" class="form-control-edit" type="number" step="0.01" min="0" value="{{ item.price }}">
+                            </div>
+
+                            Available: <input id="available" name="available" type="checkbox" step="1" min="0"value="{{ item.available }}"
+                            {% if item.available %}
+                                checked
+                            {% endif %}
+                            ><br><br>
+        <!--                     <input type="file" id="image" name="image" class="image-upload"><br> -->
+
+                            <input type="submit" name="update" class="btn btn-lg btn-primary green-button btn-block text-uppercase" type="submit" value="Update Item">
+        <!--                     <input type="submit" name="remove" class="btn btn-lg btn-primary red-button" type="submit" value="Remove Item"> -->
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            You have no items in your menu.
+        {% endif %}
+	</div>
+{% endblock %}

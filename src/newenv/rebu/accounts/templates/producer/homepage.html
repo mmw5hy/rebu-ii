@@ -1,0 +1,155 @@
+<!-- This template renders the producers's homepage that may or may not include past/incomplete/pending orders, as well as the ability to create and edit items for their menu. -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <script type="text/javascript" src="{% static 'js/horizontal_scroll.js' %}"></script>
+
+    <div id="customer-main-content" class="main-content row">
+        {% if user.producer.denied %}
+            <h1> Sorry, your application to cook has been denied. </h1>
+        {% elif not user.producer.processed %}
+            <h1> Your application is still being processed, please check back soon! </h1>
+        {% else %}
+            <div class="title" style="width: 100%; text-align: center; margin:auto;">
+                {% if user.is_authenticated %}
+                    <button onclick="location.href='{% url 'create-item' %}'" class="btn btn-lg btn-primary green-button">Create an Item</button>
+                    <button onclick="location.href='{% url 'edit-items' %}'" class="btn btn-lg btn-primary green-button">Edit an Item</button>
+                {% endif %}
+            </div><br>
+            {% if orders %}
+                {% if incomplete_orders %}
+                    <div id="customer-content-title" class="page-header">
+                        Incomplete Orders:
+                    </div>
+
+                    <div id="producer-favorites-container">
+                        <div id="horizontal-scroll-1" class="favorites-scroll scrolling-wrapper">
+                            {% for order in incomplete_orders %}
+                                <form method="get" action={% url 'producer_orders' order.id %} class="card col-md-3">
+                                    <div style="height: 100%" onClick="javascript:this.parentNode.submit();">
+                                        <div class="card-body producer-favorites-card-bottom">
+                                            <div style="height: 100%; overflow: hidden;">
+                                                <input id="order_id" name="order_id" type="hidden" value="{{order.id}}">
+                                                <h4>From <b>{{ order.consumer.get_short_name }}</b></h4>
+                                                <p id="card-producer">On {{order.created_at}}</p>
+                                                <span>Address: {{order.to_address}}</span><br>
+                                                <span>Total: <b>${{order.price}}</b></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            {% endfor %}
+                        </div>
+                        <button id="scroll-left-btn-1"
+                                class="favorites-left-button favorites-button"
+                                type="button"
+                                onclick="favoritesScroll(false, 1)"></button>
+                        <button id="scroll-right-btn-1"
+                                class="favorites-right-button favorites-button"
+                                type="button"
+                                onclick="favoritesScroll(true, 1)"></button>
+                        <script>
+                            var container = document.getElementById('horizontal-scroll-1');
+                            var num_children = container.childElementCount;
+                            if (num_children <= 4 ||
+                                container.scrollLeft == (container.scrollWidth - container.offsetWidth)) {
+                                document.getElementById('scroll-right-btn-1').style.visibility = "hidden"
+                            }
+                        </script>
+                    </div>
+                {% endif %}
+
+                {% if pending_orders %}
+                    <div id="customer-content-title" class="page-header">
+                        Pending Orders:
+                    </div>
+
+                    <div id="producer-favorites-container">
+                        <div id="horizontal-scroll-2" class="favorites-scroll scrolling-wrapper">
+                            {% for order in pending_orders %}
+                                <form method="get" action={% url 'producer_confirm' order.id %} class="card col-md-3">
+                                    <div style="height: 100%" onClick="javascript:this.parentNode.submit();">
+                                        <div class="card-body producer-favorites-card-bottom">
+                                            <div style="height: 100%; overflow: hidden;">
+                                                <input id="order_id" name="order_id" type="hidden" value="{{order.id}}">
+                                                <h4>From <b>{{ order.consumer.get_short_name }}</b></h4>
+                                                <p id="card-producer">On {{order.created_at}}</p>
+                                                <span>Address: {{order.to_address}}</span><br>
+                                                <span>Total: <b>${{order.price}}</b></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            {% endfor %}
+                        </div>
+                        <button id="scroll-left-btn-2"
+                                class="favorites-left-button favorites-button"
+                                type="button"
+                                onclick="favoritesScroll(false, 2)"></button>
+                        <button id="scroll-right-btn-2"
+                                class="favorites-right-button favorites-button"
+                                type="button"
+                                onclick="favoritesScroll(true, 2)"></button>
+                        <script>
+                            var container = document.getElementById('horizontal-scroll-2');
+                            var num_children = container.childElementCount;
+                            if (num_children <= 4 ||
+                                container.scrollLeft == (container.scrollWidth - container.offsetWidth)) {
+                                document.getElementById('scroll-right-btn-2').style.visibility = "hidden"
+                            }
+                        </script>
+                    </div>
+                {% endif %}
+
+                {% if past_orders %}
+                    <div id="customer-content-title" class="page-header">
+                        Past Orders:
+                    </div>
+
+                    <div id="producer-favorites-container">
+                        <div id="horizontal-scroll-3" class="favorites-scroll scrolling-wrapper">
+                            {% for order in past_orders %}
+                                <form method="get" action={% url 'producer_past' order.id %} class="card col-md-3">
+                                    <div style="height: 100%" onClick="javascript:this.parentNode.submit();">
+                                        <div class="card-body producer-favorites-card-bottom">
+                                            <div style="height: 100%; overflow: hidden;">
+                                                <input id="order_id" name="order_id" type="hidden" value="{{order.id}}">
+                                                <h4>From <b>{{ order.consumer.get_short_name }}</b></h4>
+                                                <p id="card-producer">On {{order.created_at}}</p>
+                                                <span>Address: {{order.to_address}}</span><br>
+                                                <span>Total: <b>${{order.price}}</b></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            {% endfor %}
+                        </div>
+                        <button id="scroll-left-btn-3"
+                                class="favorites-left-button favorites-button"
+                                type="button"
+                                onclick="favoritesScroll(false, 3)"></button>
+                        <button id="scroll-right-btn-3"
+                                class="favorites-right-button favorites-button"
+                                type="button"
+                                onclick="favoritesScroll(true, 3)"></button>
+                        <script>
+                            var container = document.getElementById('horizontal-scroll-3');
+                            var num_children = container.childElementCount;
+                            if (num_children <= 4 ||
+                                container.scrollLeft == (container.scrollWidth - container.offsetWidth)) {
+                                document.getElementById('scroll-right-btn-3').style.visibility = "hidden"
+                            }
+                        </script>
+                    </div>
+                {% endif %}
+
+            {% else %}
+                You have no past or pending orders.
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

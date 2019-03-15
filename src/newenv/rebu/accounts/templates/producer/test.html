@@ -1,0 +1,18 @@
+<!-- This template renders the page for editing the producer profile. -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <script type="text/javascript" src="{% static 'js/horizontal_scroll.js' %}"></script>
+    <div id="customer-main-content" class="main-content row">
+                <div id="customer-content-title" class="page-header">
+                    Producer Profile Editing Coming Soon
+                </div>
+
+                <a class="btn btn-lg btn-primary green-button" id="side-menu-profile" href="{% url 'producer_profile' %}">Save Changes</a>
+
+    </div>
+
+{% endblock %}

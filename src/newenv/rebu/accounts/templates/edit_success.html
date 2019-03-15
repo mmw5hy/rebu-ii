@@ -1,0 +1,15 @@
+<!-- This template renders the page for after a user has successfully edited their profile. -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <script type="text/javascript" src="{% static 'js/horizontal_scroll.js' %}"></script>
+    <div id="customer-main-content" class="main-content row">
+                <div id="customer-content-title" class="page-header">
+                    You've successfully updated your profile
+                </div>
+	</div>
+
+{% endblock %}

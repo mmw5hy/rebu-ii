@@ -1,0 +1,14 @@
+language: python
+
+python:
+  - 3.6.3
+
+script:
+  - pip3 install django
+  - pip3 install django_private_chat
+  - pip3 install Pillow
+  - python3 src/newenv/rebu/manage.py test reviews
+  - python3 src/newenv/rebu/manage.py test marketplace
+  - python3 src/newenv/rebu/manage.py test accounts
+  - python3 src/newenv/rebu/manage.py test reviews
+

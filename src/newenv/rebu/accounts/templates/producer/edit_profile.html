@@ -1,0 +1,75 @@
+<!-- This template renders the page for editing the producer profile. -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <script type="text/javascript" src="{% static 'js/horizontal_scroll.js' %}"></script>
+<!--     <div id="customer-main-content" class="main-content row">
+                <div id="customer-content-title" class="page-header">
+                    Consumer Profile Editing Coming Soon
+                </div> -->
+
+<div class="container">
+        <div class="row">
+        	<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+				<div class="card my-5 card-signin login-card">
+					<div class="card-body">
+						<h5 class="card-title text-center">Update Your Profile</h5>
+						<form method="post" action="." class="form-signin">
+							{% csrf_token %}
+							<div class="form-label-group">
+								<input type="first_name" id="first-name" name="first_name" class="form-control" placeholder="New First Name" required autofocus>
+                                <label class="input-box" for="first_name">First Name</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="last_name" id="last-name" name="last_name" class="form-control" placeholder="New Last Name" required autofocus>
+                                <label class="input-box" for="last_name">Last Name</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="email" id="email" name="email" class="form-control" placeholder="New Email address" required autofocus>
+                                <label class="input-box" for="email">Email address</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="text" id="store-name" name="store_name" class="form-control" placeholder="Store Name" required autofocus>
+                				<label class="input-box" for="store_name">Store Name</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="text" id="address" name="address" class="form-control" placeholder="New Address" required>
+                                <label class="input-box" for="address">Address</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="date" id="birthday" name="birthday" class="form-control" placeholder="New Birthday" required autofocus>
+                                <label class="input-box" for="birthday">Birthday</label>
+							</div>
+
+			              <!-- <input type="button" id="loadProPic" class="btn btn-lg btn-primary btn-block text-uppercase green-button non-form-btn" value="New Profile Picture" onclick="document.getElementById('image').click();" />
+			              <p></p>
+			              <text id="proPic">   </text>
+			              <input style="display: none;" type="file" id="image" name="image" class="image-upload" onchange="alertFilename()" required autofocus> -->
+			              
+                            <!--
+							<div class="custom-control custom-checkbox mb-3">
+								<input type="checkbox" class="custom-control-input" id="customCheck1">
+								<label class="custom-control-label" for="customCheck1">Remember password</label>
+							</div>
+                            -->
+
+							<button id="login-submit" class="btn btn-lg btn-primary btn-block text-uppercase green-button" type="submit" name="submit" value="Edit">Save Profile Edits</button>
+						</form>
+					</div>
+				</div>
+			</div>
+        </div>
+    </div>
+                <!-- <a class="btn btn-lg btn-primary green-button" id="side-menu-profile" href="{% url 'consumer_profile' %}">Save Changes</a>
+
+	</div> -->
+
+{% endblock %}

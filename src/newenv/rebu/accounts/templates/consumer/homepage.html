@@ -1,0 +1,309 @@
+<!-- This template renders the consumer's homepage that may or may not include items/producers available to order. -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <script type="text/javascript" src="{% static 'js/horizontal_scroll.js' %}"></script>
+    <div id="search-parent">
+        <div id="search-child" class="justify-content-center">
+			<div id="slogan">
+				<span> Explore your palette. </span>
+			</div>
+			<div id="search-group" class="input-group input-group-lg mx-auto">
+			  	<input id="search-input" type="text" class="form-control search-input" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+			</div>
+        </div>
+    </div>
+    <div id="customer-main-content" class="main-content row">
+      {% if available_items %}
+        {% if consumer.favorite_items.all %}
+        <div id="customer-content-title" class="page-header">
+            Favorite Items
+        </div>
+        <div id="favorites-container">
+            <div id="horizontal-scroll-1" class="favorites-scroll scrolling-wrapper">
+                {% for item in consumer.favorite_items.all %}
+                    <form method="get" action={% url 'item_specific' item.id %} class="card col-md-3">
+                        <div style="height: 100%" onClick="javascript:this.parentNode.submit();">
+                            <div class="item-image-parent">
+                                <img class="item-image" src="{{ item.image.url }}">
+                            </div>
+                            <div class="card-body favorites-card-bottom">
+                                <div style="height: 100%; overflow: hidden;">
+                                    <input id="item_id" name="item_id" type="hidden" value="{{item.id}}">
+                                    <h4><b>{{ item.name }}</b></h4>
+                                    <p id="card-producer">by {{item.producer.get_short_name}}</p>
+                                    <span>${{ item.price }}&nbsp&nbsp|&nbsp</span>
+
+                                    {% if item.num_reviews == 0 %}
+                                    <span>No Reviews</span>
+                                    {% else %}
+
+                                    {% for i in "xxxxx" %}
+                                        {% if item.rating >= forloop.counter %}
+                                            <img style="height: 10%;%" src="{% static 'images/rating-stars/full_star.png' %}">
+                                        {% else %}
+                                            <img style="height: 10%;" src="{% static 'images/rating-stars/empty_star.png' %}">
+                                        {% endif %}
+                                    {% endfor %}
+                                    <span>{{ item.rating }} ({{ item.num_reviews }}) </span>
+                                    {% endif %}
+
+                                    <br>
+
+                                    {% if item not in consumer.favorite_items.all %}
+                                    <a class="btn btn-sm btn-primary green-button" href="api/consumers/addFavItem/{{item.id}}">Favorite This Item</a>
+
+                                    {% elif consumer is None %}
+
+                                    {% else %}
+
+                                    <a style="background-color: red;" class="btn btn-sm btn-primary green-button" href="api/consumers/removeFavItem/{{item.id}}">Unfavorite This Item</a>
+
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                {% endfor %}
+            </div>
+            <button id="scroll-left-btn-1"
+                    class="favorites-left-button favorites-button"
+                    type="button"
+                    onclick="favoritesScroll(false, 1)">
+            </button>
+            <button id="scroll-right-btn-1"
+                    class="favorites-right-button favorites-button"
+                    type="button"
+                    onclick="favoritesScroll(true, 1)">
+            </button>
+            <script>
+                // Disable scroll right button if there are not enough elements
+                var container = document.getElementById('horizontal-scroll-1');
+                var num_children = container.childElementCount;
+                if (num_children <= 4 ||
+                    container.scrollLeft == (container.scrollWidth - container.offsetWidth)) {
+                    document.getElementById('scroll-right-btn-1').style.visibility = "hidden"
+                }
+            </script>
+        </div>
+        {% endif %}
+        {% if consumer.favorite_producers.all %}
+        <div id="customer-content-title" class="page-header">
+            Favorite Cooks
+        </div>
+        <div id="favorites-container">
+            <div id="horizontal-scroll-2" class="favorites-scroll scrolling-wrapper">
+                {% for producer in consumer.favorite_producers.all %}
+                    <form method="get" action={% url 'new_order' producer.id %} class="card col-md-3">
+                        <div style="height: 100%" onClick="javascript:this.parentNode.submit();">
+                            <div class="item-image-parent">
+                                <img class="item-image" src="{{ producer.image.url }}">
+                            </div>
+                            <div class="card-body">
+                                <input id="producer_id" name="producer_id" type="hidden" value="{{item.id}}">
+                                <h4>{{ producer.store_name }}</h4>
+                                <p id="card-producer">by {{producer.get_short_name}}</p>
+                                <span>From: {{ producer.address }} <br>
+                                {% if producer.rating == 0 %}
+                                No Reviews</span>
+                                {% else %}
+
+                                {% for i in "xxxxx" %}
+                                    {% if producer.rating >= forloop.counter %}
+                                        <img style="height: 5%; width: 5%" src="{% static 'images/rating-stars/full_star.png' %}">
+                                    {% else %}
+                                        <img style="height: 5%; width: 5%" src="{% static 'images/rating-stars/empty_star.png' %}">
+                                    {% endif %}
+                                {% endfor %}
+                              </span>
+                                <span> {{ producer.rating }} </span>
+                                {% endif %}
+                                <br>
+                                <span>
+                                  {% if producer not in consumer.favorite_producers.all %}
+                                  <a class="btn btn-sm btn-primary green-button" href="api/consumers/addFavProducer/{{producer.id}}">Favorite This Producer</a>
+
+                                  {% elif consumer is None %}
+
+                                  {% else %}
+
+                                  <a style="background-color: red;" class="btn btn-sm btn-primary green-button" href="api/consumers/removeFavProducer/{{producer.id}}">Unfavorite This Producer</a>
+
+                                  {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                {% endfor %}
+            </div>
+            <button id="scroll-left-btn-2"
+                    class="favorites-left-button favorites-button"
+                    type="button"
+                    onclick="favoritesScroll(false, 2)"
+                    style="margin-left: -15px"></button>
+            <button id="scroll-right-btn-2"
+                    class="favorites-right-button favorites-button"
+                    type="button"
+                    onclick="favoritesScroll(true, 2)"
+                    style="margin-right: -15px"></button>
+            <script>
+                // Disable scroll right button if there are not enough elements
+                var container = document.getElementById('horizontal-scroll-2');
+                var num_children = container.childElementCount;
+                if (num_children <= 4 ||
+                    container.scrollLeft == (container.scrollWidth - container.offsetWidth)) {
+                    document.getElementById('scroll-right-btn-2').style.visibility = "hidden"
+                }
+            </script>
+        </div>
+        {% endif %}
+
+
+            {% if available_items %}
+            <div id="customer-content-title" class="page-header">
+                Available Items
+            </div>
+            <div id="favorites-container">
+                <div id="horizontal-scroll-3" class="favorites-scroll scrolling-wrapper">
+                    {% for item in available_items %}
+                        <form method="get" action={% url 'item_specific' item.id %} class="card col-md-3">
+                            <div style="height: 100%" onClick="javascript:this.parentNode.submit();">
+                                <div class="item-image-parent">
+                                    <img class="item-image" src="{{ item.image.url }}">
+                                </div>
+                                <div class="card-body favorites-card-bottom">
+                                    <div style="height: 100%; overflow: hidden;">
+                                        <input id="item_id" name="item_id" type="hidden" value="{{item.id}}">
+                                        <h4><b>{{ item.name }}</b></h4>
+                                        <p id="card-producer">by {{item.producer.get_short_name}}</p>
+                                        <span>${{ item.price }}&nbsp&nbsp|&nbsp</span>
+
+                                        {% if item.num_reviews == 0 %}
+                                        <span>No Reviews</span>
+                                        {% else %}
+
+                                        {% for i in "xxxxx" %}
+                                            {% if item.rating >= forloop.counter %}
+                                                <img style="height: 10%;%" src="{% static 'images/rating-stars/full_star.png' %}">
+                                            {% else %}
+                                                <img style="height: 10%;" src="{% static 'images/rating-stars/empty_star.png' %}">
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span>{{ item.rating }} ({{ item.num_reviews }}) </span>
+                                        {% endif %}
+
+                                        <br>
+
+                                        {% if item not in consumer.favorite_items.all %}
+                                        <a class="btn btn-sm btn-primary green-button" href="api/consumers/addFavItem/{{item.id}}">Favorite This Item</a>
+
+                                        {% elif consumer is None %}
+
+                                        {% else %}
+
+                                        <a style="background-color: red;" class="btn btn-sm btn-primary green-button" href="api/consumers/removeFavItem/{{item.id}}">Unfavorite This Item</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    {% endfor %}
+                </div>
+                <button id="scroll-left-btn-3"
+                        class="favorites-left-button favorites-button"
+                        type="button"
+                        onclick="favoritesScroll(false, 1)">
+                </button>
+                <button id="scroll-right-btn-3"
+                        class="favorites-right-button favorites-button"
+                        type="button"
+                        onclick="favoritesScroll(true, 1)">
+                </button>
+                <script>
+                    // Disable scroll right button if there are not enough elements
+                    var container = document.getElementById('horizontal-scroll-3');
+                    var num_children = container.childElementCount;
+                    if (num_children <= 4 ||
+                        container.scrollLeft == (container.scrollWidth - container.offsetWidth)) {
+                        document.getElementById('scroll-right-btn-3').style.visibility = "hidden"
+                    }
+                </script>
+            </div>
+            {% endif %}
+            <div id="customer-content-title" class="page-header">
+                Available Cooks
+            </div>
+            <div id="favorites-container">
+                <div id="horizontal-scroll-4" class="favorites-scroll scrolling-wrapper">
+                    {% for producer in active_producers %}
+                        <form method="get" action={% url 'new_order' producer.id %} class="card col-md-3">
+                            <div style="height: 100%" onClick="javascript:this.parentNode.submit();">
+                                <div class="item-image-parent">
+                                    <img class="item-image" src="{{ producer.image.url }}">
+                                </div>
+                                <div class="card-body">
+                                    <input id="producer_id" name="producer_id" type="hidden" value="{{item.id}}">
+                                    <h4>{{ producer.store_name }}</h4>
+                                    <p id="card-producer">by {{producer.get_short_name}}</p>
+                                    <span>From: {{ producer.address }} <br>
+                                    {% if producer.rating == 0 %}
+                                    No Reviews</span>
+                                    {% else %}
+
+                                    {% for i in "xxxxx" %}
+                                        {% if producer.rating >= forloop.counter %}
+                                            <img style="height: 5%; width: 5%" src="{% static 'images/rating-stars/full_star.png' %}">
+                                        {% else %}
+                                            <img style="height: 5%; width: 5%" src="{% static 'images/rating-stars/empty_star.png' %}">
+                                        {% endif %}
+                                    {% endfor %}
+                                  </span>
+                                    <span> {{ producer.rating }} </span>
+                                    {% endif %}
+                                    <br>
+                                    <span>
+                                          {% if producer not in consumer.favorite_producers.all %}
+                                          <a class="btn btn-sm btn-primary green-button" href="api/consumers/addFavProducer/{{producer.id}}">Favorite This Producer</a>
+
+                                          {% elif consumer is None %}
+
+                                          {% else %}
+
+                                          <a style="background-color: red;" class="btn btn-sm btn-primary red-button" href="api/consumers/removeFavProducer/{{producer.id}}">Unfavorite This Producer</a>
+
+                                          {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    {% endfor %}
+                </div>
+                <button id="scroll-left-btn-4"
+                        class="favorites-left-button favorites-button"
+                        type="button"
+                        onclick="favoritesScroll(false, 2)"
+                        style="margin-left: -15px"></button>
+                <button id="scroll-right-btn-4"
+                        class="favorites-right-button favorites-button"
+                        type="button"
+                        onclick="favoritesScroll(true, 2)"
+                        style="margin-right: -15px"></button>
+                <script>
+                    // Disable scroll right button if there are not enough elements
+                    var container = document.getElementById('horizontal-scroll-4');
+                    var num_children = container.childElementCount;
+                    if (num_children <= 4 ||
+                        container.scrollLeft == (container.scrollWidth - container.offsetWidth)) {
+                        document.getElementById('scroll-right-btn-4').style.visibility = "hidden"
+                    }
+                </script>
+            </div>
+        {% else %}
+            There is nothing available to order right now.
+        {% endif %}
+	</div>
+</div>
+{% endblock %}

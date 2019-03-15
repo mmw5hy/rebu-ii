@@ -1,0 +1,154 @@
+<!-- This template renders a consumer page that displays a single clicked-on item available to order. -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <script>
+        function increaseQuantity(item_id) {
+            quantity = parseInt(document.getElementById(item_id+'-quantity').value) + 1;
+            document.getElementById(item_id+'-quantity').value = quantity + "";
+            document.getElementById(item_id+'-item-count').innerHTML = quantity + "";
+            document.getElementById(item_id+'-item-count').style.color = "rgb(0,0,0)";
+            if (quantity == 20) {
+                document.getElementById(item_id+'-increase-button').disabled = true;
+            }
+            document.getElementById(item_id+'-decrease-button').disabled = false;
+        }
+
+        function decreaseQuantity(item_id) {
+            quantity = parseInt(document.getElementById(item_id+'-quantity').value) - 1;
+            document.getElementById(item_id+'-quantity').value = quantity + "";
+            document.getElementById(item_id+'-item-count').innerHTML = quantity + "";
+            if (quantity == 0) {
+                document.getElementById(item_id+'-decrease-button').disabled = true;
+                document.getElementById(item_id+'-item-count').style.color = "rgba(0,0,0,0.125)";
+            }
+            document.getElementById(item_id+'-increase-button').disabled = false;
+        }
+
+        function openModal() {
+            document.getElementById("confirm-modal").style.display = "block";
+            document.getElementById("confirm-modal-overlay").removeAttribute("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("confirm-modal").style.display = "none";
+            document.getElementById("confirm-modal-overlay").setAttribute("hidden", "");
+        }
+
+    </script>
+
+    <div class="main-content">
+      {% if item not in consumer.favorite_items.all %}
+      <a class="btn btn-sm btn-primary green-button" href="/api/consumers/addFavItem/{{item.id}}">Favorite This Item</a>
+
+      {% else %}
+
+      <a style="background-color: red;" class="btn btn-sm btn-primary green-button" href="/api/consumers/removeFavItem/{{item.id}}">Unfavorite This Item</a>
+      {% endif %}
+      <br><br>
+        <form action="{% url 'item_specific' item.id %}" method="post">
+            <div class="item-container card" style="max-height: 100%; overflow: auto;">
+                <div class="item-container-image-parent">
+                    <img class="item-container-image" src="{{ item.image.url }}">
+                </div>
+
+                <div class="item-container-description">
+
+                    <span class="item-page-name">
+                        {{ item.name }}
+                        <span style="font-weight: 400;">
+                            (${{ item.price }})
+                        </span>
+                    </span>
+                    <br>
+
+                    {% if reviews.count  == 0 %}
+                        <span>No Reviews</span>
+                    {% else %}
+                        {% for i in "xxxxx" %}
+                            {% if item.rating >= forloop.counter %}
+                                <img style="height: 2%; width: 2%" src="{% static 'images/rating-stars/full_star.png' %}">
+                            {% else %}
+                                <img style="height: 2%; width: 2%" src="{% static 'images/rating-stars/empty_star.png' %}">
+                            {% endif %}
+                        {% endfor %}
+                        <span>{{ item.rating }} ({{ reviews.count }}) </span>
+                    {% endif %}
+                    <br>
+
+                    <span class="item-page-producer clickable-text">
+                        <a href="{% url 'new_order' item.producer_id %}">
+                            {{ item.producer.store_name }} (click to see more)
+                        </a>
+                    </span>
+                    <br>
+                    <p class="item-page-description">
+                        {{ item.description }}
+                    </p>
+                    <p><b>Ingredients:</b> {{ item.ingredients }}</p>
+                </div>
+                <div class="item-container-right">
+                    <button id="{{item.id}}-increase-button" class="item-count-btn" onclick="increaseQuantity({{item.id}})" type="button">+</button>
+                    <input type="hidden" id="{{item.id}}-quantity" name="{{item.id}}" value="0">
+                    <div id="{{item.id}}-item-count" class="item-count">0</div>
+                    <button id="{{item.id}}-decrease-button" class="item-count-btn" onclick="decreaseQuantity({{item.id}})" type="button" disabled>-</button>
+                </div>
+                <div id="reviews-container">
+                    {% for review in reviews %}
+                        <div class="item-review">
+                            <hr>
+                            <div id="top-row" style="width: 100%;">
+                                <div style="float: left">
+                                    <div style="font-weight: 700; float: left;">
+                                        {{ review.title }}
+                                    </div>
+                                    <div style="font-weight: 500; float: left;">
+                                        &nbspby {{ review.author.get_short_name }}<br>
+                                    </div>
+                                    <div style="font-weight: 500;">
+                                        {{ review.time_written.date }}
+                                    </div>
+                                </div>
+                                <div style="height: 17px; float: right; position: relative;">
+                                    {% for i in "xxxxx" %}
+                                        {% if review.rating >= forloop.counter %}
+                                            <img style="height: 100%;" src="{% static 'images/rating-stars/full_star.png' %}">
+                                        {% else %}
+                                            <img style="height: 100%;" src="{% static 'images/rating-stars/empty_star.png' %}">
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            <p style="margin-top: 1rem; margin-bottom: 0; max-height: 100px; overflow: auto;">{{ review.body }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div id="item-page-invisible-footer"></div>
+            <div id="fixed-btn-container">
+                {% if cart.producer_id != item.producer.id %}
+                    {% if cart.items %}
+                        <input type="button" id="open-modal-btn" onclick="openModal()" class="btn btn-lg btn-primary green-button fixed-btn" value="Add Item to Cart">
+                    {% else %}
+                        <input type="submit" class="btn btn-lg btn-primary green-button fixed-btn" value="Add Item to Cart">
+                    {% endif %}
+                {% else %}
+                    <input type="submit" class="btn btn-lg btn-primary green-button fixed-btn" value="Add Item to Cart">
+                {% endif %}
+            </div>
+            <div id="confirm-modal" class="modal-class">
+                <div id="confirm-modal-content">
+                    <span id="confirm-modal-text">You are about to replace your current shopping cart with new items from {{item.producer.get_short_name}}. Are you sure you want to continue?</span>
+                    <input id="submit-modal-btn" type="submit" class="btn btn-lg btn-primary red-button" value="Yes">
+                    <span id="close-modal-btn" class="btn btn-lg btn-primary green-button" onclick="closeModal()">No</span>
+                </div>
+            </div>
+            <div id="confirm-modal-overlay" hidden></div>
+        </form>
+    </div>
+{% endblock %}

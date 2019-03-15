@@ -1,0 +1,213 @@
+<!-- This template renders the universal items that will be accessable across all pages, including the navbar, side menu pop-out, and notification message pop-outs. -->
+
+<!DOCTYPE html>
+{% csrf_token %}
+<html lang="en">
+
+{% load static %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/js-functions.css' %}"></script>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="//oss.maxcdn.com/libs/jquery.finderselect/0.6.0/jquery.finderselect.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+
+
+    <title>Rebu</title>
+</head>
+
+<body>
+    <script>
+        function openNav() {
+            document.getElementById("side-menu").style.transform = 'translate(0, 0)';
+            document.getElementById("side-menu-overlay").removeAttribute("hidden");
+        }
+
+        function closeNav() {
+            document.getElementById("side-menu").style.transform = 'translate(100%, 0)';
+            document.getElementById("side-menu-overlay").setAttribute("hidden", "");
+        }
+
+        document.addEventListener("click", function(event) {
+            var tr = window.getComputedStyle(document.getElementById("side-menu"), null).getPropertyValue("transform")
+            var values = tr.split('(')[1], values = values.split(')')[0], values = values.split(',');
+            var transformX = values[4];
+            var menuAndClickOut = transformX != 350 && !event.target.closest('.side-menu');
+
+            if (menuAndClickOut)
+                closeNav();
+        });
+
+        function maybeDisableButtons(item_id, quantity) {
+            if (quantity == 20) {
+                document.getElementById(item_id+'-cart-increase').disabled = true;
+                document.getElementById(item_id+'-cart-decrease').disabled = false;
+            } else if (quantity == 0) {
+                document.getElementById(item_id+'-cart-increase').disabled = false;
+                document.getElementById(item_id+'-cart-decrease').disabled = true;
+            }
+        }
+
+        function adjustCartQuantity(item_id, increment) {
+            quantity = parseInt(document.getElementById(item_id+'-cart-quantity').value) + increment;
+            document.getElementById(item_id+'-cart-quantity').value = quantity + "";
+            document.getElementById(item_id+'-cart-count').innerHTML = quantity + "";
+            maybeDisableButtons(item_id, quantity)
+        }
+
+    </script>
+	<nav id="navbar" class="navbar navbar-expand-md shadow-sm nav-custom">
+    <a id="logo" class="navbar-brand" href="{% url 'home' %}">REBU</a>
+    <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div id="menu-options" class="collapse navbar-collapse justify-content-end">
+        <div class="nav-divider">
+            <ul class="navbar-nav navbar-right">
+            	{% if user.is_authenticated %}
+            		<li class="nav-item navbar-right">
+                        <a class="nav-link message-link" href="{% url 'dialogs' %}"><img src="{% static 'images/messaging_icon.png' %}"></a>      
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarDropdown" onclick="openNav()">
+                            Welcome,
+                        {% if user.is_superuser %}
+                            {{ user }}
+                        {% else %}
+                            {{ user.get_short_name }}
+                        {% endif %}
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item navbar-right">
+                        <a class="nav-link" href="{% url 'consumer-signup' %}">Sign Up</a>
+                    </li>
+                    <li class="nav-item navbar-right">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        </ul>
+    </div>
+</nav>
+{% for message in messages %}
+    {% if message.level == 25 %} <!-- Used for success messages (green) -->
+        <div class="alert alert-success fade show">
+            <a class="close" href="#" data-dismiss="alert">×</a>
+            {{ message }}
+        </div>
+    {% endif %}
+    {% if message.level == 40 %} <!-- Used for error messages (red) -->
+        <div class="alert alert-danger fade show">
+            <a class="close" href="#" data-dismiss="alert">×</a>
+            {{ message }}
+        </div>
+    {% endif %}
+{% endfor %}
+{% if user.is_authenticated %}
+    {% if user.is_producer %}
+        <div class="side-menu" id="side-menu">
+            <div id="side-menu-container">
+                <div id="side-menu-btn-container-prod">
+                    <a class="btn btn-lg btn-primary green-button" id="side-menu-profile" href="{% url 'producer_profile' %}">Profile</a>
+                    <a class="btn btn-lg btn-primary red-button" id="side-menu-logout" href="{% url 'logout' %}">Log Out</a>
+                </div>
+                <hr class="side-menu-hr" id="hr-top">
+                {% if items %}
+                    <div id="item-list">
+                        <h4> Your Items </h4>
+                        {% for item in items %}
+                            <div id="shopping-cart-item">
+                                <div id="shopping-cart-item-image-parent">
+                                    <img class="shopping-cart-item-image" src="{{ item.image.url }}">
+                                </div>
+                                <div id="shopping-cart-item-details">
+                                    <div id="shopping-cart-item-name">
+                                        <b>{{ item.name }}</b>
+                                    </div>
+                                    <div id="shopping-cart-item-price">
+                                        ${{ item.price }}
+                                    </div>
+                                </div>
+                                <div id="shopping-cart-item-quantity">
+                                    <div class="cart-quantity-child">
+<!--                                         <input type="hidden" id="{{order_item.item.id}}-cart-quantity" name="{{order_item.item.id}}" value="{{order_item.count}}">
+                                        <div id="{{order_item.item.id}}-cart-count" class="cart-count">{{order_item.count}}</div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <h4> {{ empty_cart_msg }} </h4>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div class="side-menu" id="side-menu">
+            <div id="side-menu-container">
+                <div id="side-menu-btn-container-cons">
+                    <a class="btn btn-lg btn-primary green-button" id="side-menu-profile" href="{% url 'consumer_profile' %}">Profile</a>
+                    <a class="btn btn-lg btn-primary green-button" id="side-menu-past-orders" href="{% url 'past_order_page' %}">Past Orders</a>
+                    <a class="btn btn-lg btn-primary red-button" id="side-menu-logout" href="{% url 'logout' %}">Log Out</a>
+                </div>
+                <hr class="side-menu-hr" id="hr-top">
+                {% if order_item_to_item %}
+                    <div id="shopping-cart">
+                        <h4> Your Shopping Cart from {{cart.producer.store_name}} </h4>
+                        <form id="order" action="{% url 'update_cart' %}" method="post">
+                            {% for order_item, item in order_item_to_item.items %}
+                                <div id="shopping-cart-item">
+                                    <div id="shopping-cart-item-image-parent">
+                                        <img class="shopping-cart-item-image" src="{{ order_item.item.image.url }}">
+                                    </div>
+                                    <div id="shopping-cart-item-details">
+                                        <div id="shopping-cart-item-name">
+                                            <b>{{ order_item.item.name }}</b>
+                                        </div>
+                                        <div id="shopping-cart-item-price">
+                                            ${{ order_item.item.price }}
+                                        </div>
+                                    </div>
+                                    <div id="shopping-cart-item-quantity">
+                                        <div class="cart-quantity-child">
+                                            <button id="{{order_item.item.id}}-cart-increase" class="cart-count-btn" type="button" onclick="adjustCartQuantity({{order_item.item.id}}, 1)">+</button>
+                                            <input type="hidden" id="{{order_item.item.id}}-cart-quantity" name="{{order_item.item.id}}" value="{{order_item.count}}">
+                                            <div id="{{order_item.item.id}}-cart-count" class="cart-count">{{order_item.count}}</div>
+                                            <button id="{{order_item.item.id}}-cart-decrease" class="cart-count-btn" type="button" onclick="adjustCartQuantity({{order_item.item.id}}, -1)">-</button>
+                                        </div>
+                                    </div>
+                                    <div id="shopping-cart-item-remove">
+                                        <a href="{% url 'remove_item' cart.producer_id order_item.id %}">&times</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <input type="hidden" name="is_update" value="True"><br>
+                            <input type="submit" class="btn btn-lg btn-primary green-button" value="Update Cart"><br><br>
+                            <h4> Order Subtotal: ${{cart.price}} </h4>
+                        </form>
+                    </div>
+                    <hr class="side-menu-hr" id="hr-bottom">
+                    <a class="btn btn-lg btn-primary green-button" id="side-menu-checkout" href="{% url 'checkout_order' cart.producer_id %}">Checkout</a>
+                {% else %}
+                    <h4> {{ empty_cart_msg }} </h4>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+    <div id="side-menu-overlay" hidden></div>
+{% endif %}
+{% block extra_js %}{% endblock extra_js %}
+{% block content %}
+{% endblock %}
+</body>

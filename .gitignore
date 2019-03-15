@@ -1,0 +1,10 @@
+*pycache*
+*.pyc
+__pycache__/
+*migrations*
+.*.swp
+db.sqlite3
+*.DS_Store
+*item-images*
+*profile_pics*
+*producer_documents*

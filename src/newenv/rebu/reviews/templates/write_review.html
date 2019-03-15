@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<br>
+
+<h3 class= "page-header"> Create Review </h3>
+<br>
+<div>
+  <p style="height: 75px; width: 75px; background-color:white; float:left;">
+    <img style="max-width: 100%; height: auto;" src="{{ item.image.url }}">
+    <h3>&nbsp&nbsp{{ item.name }} from {{ item.producer.get_short_name }}</h3>
+  </p>
+</div>
+
+<br></br>
+
+<form method="post">
+  <br>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock %}

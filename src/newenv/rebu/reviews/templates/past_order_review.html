@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+<div class="main-content">
+		{% if items %}
+			<h3 id="order-title"> Items bought! </h3> 
+				{% for item, count in items %}
+					<div class="item-container card">
+						<div class="item-container-image-parent">
+	                        <img class="item-container-image" src="{{ item.image.url }}">
+	                    </div>
+
+	                    <div class="item-container-description">
+	                        <span class="item-page-name">
+	                            {{ item.name }}
+	                            <span style="font-weight: 400;">
+	                                (${{ item.price }})
+	                            </span>
+	                        </span>
+	                        <br>
+	                        <span class="item-page-producer">
+	                            Quantity: {{ count }}
+	                        </span>
+	                        <br>
+	                        <p class="item-page-description">
+	                            {{ item.description }}
+	                        </p>
+	                        <p><b>Ingredients:</b> {{ item.ingredients }}</p>
+
+	                        <form action="/reviews/write/{{item.id}}">
+								<input type="submit" value="Write a Review" />
+							</form>
+
+	                    </div>
+					</div>
+				{% endfor %}
+		{% endif %}
+</div>
+
+
+{% endblock %}

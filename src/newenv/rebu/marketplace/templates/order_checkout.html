@@ -1,0 +1,124 @@
+<!-- This template renders the checkout page for a consumer's order. -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<script>
+function increaseQuantity(item_id) {
+    quantity = parseInt(document.getElementById(item_id+'-quantity').value) + 1;
+    document.getElementById(item_id+'-quantity').value = quantity + "";
+    document.getElementById(item_id+'-item-count').innerHTML = quantity + "";
+    document.getElementById(item_id+'-item-count').style.color = "rgb(0,0,0)";
+    if (quantity == 20) {
+        document.getElementById(item_id+'-increase-button').disabled = true;
+    }
+    document.getElementById(item_id+'-decrease-button').disabled = false;
+}
+
+function decreaseQuantity(item_id) {
+    quantity = parseInt(document.getElementById(item_id+'-quantity').value) - 1;
+    document.getElementById(item_id+'-quantity').value = quantity + "";
+    document.getElementById(item_id+'-item-count').innerHTML = quantity + "";
+    if (quantity == 0) {
+        document.getElementById(item_id+'-decrease-button').disabled = true;
+        document.getElementById(item_id+'-item-count').style.color = "rgba(0,0,0,0.125)";
+    }
+    document.getElementById(item_id+'-increase-button').disabled = false;
+}
+</script>
+
+<div class="main-content">
+    <h3> Review your Order from {{producer.get_short_name}}! </h3> 
+    <form id='checkout' action="{% url 'checkout_order' producer.id %}" method="post">
+    <div id="items-div" style="padding-right: 20px; width: 70%; float: left;">
+        {% for order_item, item in order_item_to_item.items %}
+            <div class="item-container card">
+                <div class="item-container-image-parent">
+                    <img class="item-container-image" src="{{ item.image.url }}">
+                </div>
+                <div class="item-container-description">
+                    <span class="item-page-name">
+                        {{ item.name }}
+                        <span style="font-weight: 400;">
+                            (${{ item.price }})
+                        </span>
+                    </span>
+                    <br>
+                    <span class="item-page-producer">
+                        {{ item.producer.store_name }}
+                    </span>
+                    <br> <p class="item-page-description">
+                        {{ item.description }}
+                    </p>
+                    <p><b>Ingredients:</b> {{ item.ingredients }}</p>
+
+                    <div style="height: 17px; float: left; position: relative;">
+
+                      {% if item.num_reviews == 0 %}
+                      <span>No Reviews</span>
+                      {% else %}
+
+                      {% for i in "xxxxx" %}
+                          {% if item.rating >= forloop.counter %}
+                              <img style="height: 100%;%" src="{% static 'images/rating-stars/full_star.png' %}">
+                          {% else %}
+                              <img style="height: 100%;" src="{% static 'images/rating-stars/empty_star.png' %}">
+                          {% endif %}
+                      {% endfor %}
+                      <span>{{ item.rating }} ({{ item.num_reviews }}) </span>
+                      <br>
+                      <p class="clickable-text">
+                          <a href="{% url 'item_specific' item.id %}">
+                              See Reviews
+                          </a>
+                      </p>
+                      {% endif %}
+
+                    </div>
+                </div>
+                <div class="item-container-right">
+                    <button id="{{item.id}}-increase-button" class="item-count-btn" onclick="increaseQuantity({{item.id}})" type="button" style="color: #FFF;" disabled>+</button>
+                    <input type="hidden" id="{{item.id}}-quantity" name="{{item.id}}" value="{{order_item.count}}">
+                    <div id="{{item.id}}-item-count" class="item-count" style="color: rgb(0,0,0);">{{order_item.count}}</div>
+                    <button id="{{item.id}}-decrease-button" class="item-count-btn" onclick="decreaseQuantity({{item.id}})" type="button" style="color: #FFF;" disabled>-</button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div id="checkout-details" class="item-container" style="width: 30%; float: right; background-color: #FFF">
+        <span class="item-page-name">
+            Order Summary
+        </span>
+        <div>
+            <span class="item-page-description" style="float: left; width: 60%;">Item(s) Subtotal</span>
+            <span class="item-page-description" style="float: right; width: 40%; text-align: right;">${{ cart.price }}</span>
+        </div>
+        <div>
+            <span class="item-page-description" style="float: left; width: 60%;">Delivery Fee</span>
+            <span class="item-page-description" style="float: right; width: 40%; text-align: right;">$5.00</span>
+        </div>
+        <div>
+            <span class="item-page-description" style="float: left; width: 60%;">Tax</span>
+            <span class="item-page-description" style="float: right; width: 40%; text-align: right;">${{tax}}</span>
+            <hr class="item-page-description" style="float:left; margin: 15px 0 10px 0">
+        </div>
+        <div>
+            <span class="item-page-description" style="float: left; width: 60%;">Order Total</span>
+            <span class="item-page-description" style="float: right; width: 40%; text-align: right;"><b>${{total}}</b></span>
+        </div>
+        <input id="from_address" name="from_address" type="hidden" value="{{producer.address}}">
+
+        <span class="item-page-description" style="float: left; width: 100%; text-align: center; margin-top: 25px;">Deliver To:</span>
+        <input id="to_address" name="to_address" placeholder="Enter an address to deliver to" type="text" value="{{request.user.address}}" style="margin-bottom: 20px; width: 100%">
+
+        <textarea rows="3" name="comment" placeholder="Enter special instructions here..." form="checkout" style="width: 100%; margin-bottom: 10px;"></textarea>
+        <br>
+        <div style="text-align: center">
+            <input type="submit" class="btn btn-sm btn-primary green-button" style="display: inline-block; font-size: 18px" value="Place Order">
+        </div>
+    </div>
+    </form>
+</div>
+{% endblock %}

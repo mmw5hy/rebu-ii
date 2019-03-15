@@ -1,0 +1,58 @@
+<!-- This template renders a page for someone to sign up as a consumer. -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+        	<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+				<div class="card my-5 card-signin login-card">
+					<div class="card-body">
+						<h5 class="card-title text-center">Sign Up to Eat</h5>
+						<form method="post" action="." class="form-signin">
+							{% csrf_token %}
+							<div class="form-label-group">
+								<input type="text" id="first-name" name="first_name" class="form-control" placeholder="First Name" required autofocus>
+                                <label class="input-box" for="first_name">First Name</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="text" id="last-name" name="last_name" class="form-control" placeholder="Last Name" required autofocus>
+                                <label class="input-box" for="last_name">Last Name</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="email" id="email" name="email" class="form-control" placeholder="Email address" required autofocus>
+                                <label class="input-box" for="email">Email address</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                                <label class="input-box" for="password">Password</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="text" id="address" name="address" class="form-control" placeholder="Address" required autofocus>
+                                <label class="input-box" for="address">Address</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="date" id="birthday" name="birthday" class="form-control" placeholder="Birthday" required autofocus>
+                                <label class="input-box" for="birthday">Birthday</label>
+							</div>
+
+							<button class="btn btn-lg btn-primary btn-block text-uppercase green-button" type="submit" name="submit" value="Login">Sign up</button>
+                            <hr class="my-4">
+
+						</form>
+
+                        <button onclick="location.href='{% url 'producer-signup' %}'" class="btn btn-lg btn-primary btn-block text-uppercase green-button non-form-btn">Sign Up to Cook</button>
+
+					</div>
+				</div>
+			</div>	 
+        </div>
+    </div>
+{% endblock %}

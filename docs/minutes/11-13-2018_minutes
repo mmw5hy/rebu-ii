@@ -1,0 +1,15 @@
+2 views/rows:
+List view of items
+List of cooks
+
+“View more from this producer” upon clicking on an item from the item row
+
+Pass messages back to customer upon declining order
+
+Remove “shopping cart” message from producer’s navbar
+
+Admin to accept cooks
+
+Place to submit “form” for cooking permit
+
+UI for admin to accept cooks

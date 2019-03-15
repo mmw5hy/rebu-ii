@@ -1,0 +1,99 @@
+<!-- This template renders a page for the admin to view all producers that have applied to cook. -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<script>
+    function favoritesScroll(rightScroll, prod="") {
+        var container = document.getElementById('favorites-scroll'+prod);
+        var elementWidth = container.firstElementChild.getBoundingClientRect().width;
+        scrollAmount = 0
+        distance = elementWidth + 6;
+        step = elementWidth/10.;
+        finalScroll = container.scrollLeft;
+        if (rightScroll) {
+            finalScroll += distance;
+        } else {
+            finalScroll -= distance;
+        }
+        var slideTimer = setInterval(function() {
+            if (rightScroll) {
+                container.scrollLeft += step;
+                if (container.scrollLeft > 0) {
+                    document.getElementById('favorites-left-button'+prod).style.visibility = "visible"
+                }
+                if (container.scrollLeft == (container.scrollWidth - container.offsetWidth)) {
+                    document.getElementById('favorites-right-button'+prod).style.visibility = "hidden"
+                }
+            } else {
+                container.scrollLeft -= step;
+                if (container.scrollLeft == 0) {
+                    document.getElementById('favorites-left-button'+prod).style.visibility = "hidden"
+                }
+                if (container.scrollLeft < (container.scrollWidth - container.offsetWidth)) {
+                    document.getElementById('favorites-right-button'+prod).style.visibility = "visible"
+                }
+            }
+            scrollAmount += step;
+            if (scrollAmount >= distance) {
+                container.scrollLeft = finalScroll;
+                console.log("Finished scroll");
+                console.log(finalScroll);
+                console.log(container.scrollLeft);
+                window.clearInterval(slideTimer)
+            }
+        }, 25);
+    }
+</script>
+
+<div class="main-content">
+    <h2>Pending Producers</h2>
+
+    {% if producers %}
+
+    <p> Click on one to Approve/Reject </p>
+
+    <div id="favorites-container">
+        <div id="favorites-scroll-prod" class="favorites-scroll scrolling-wrapper">
+            {% for producer in producers %}
+            <form method="get" action={% url 'producer_approval' producer.id %} class="card col-md-3">
+                    <div style="height: 100%" onClick="javascript:this.parentNode.submit();">
+                        <div class="item-image-parent">
+                            <img class="item-image" src="{{ producer.image.url }}">
+                        </div>
+                        <div class="card-body">
+                            <input id="producer_id" name="producer_id" type="hidden" value="{{item.id}}">
+                            <h4>{{ producer.store_name }}</h4>
+                            <p id="card-producer">by {{producer.get_short_name}}</p>
+                            <span>From: {{ producer.address }} <br>
+                        </div>
+                    </div>
+                </form>
+            {% endfor %}
+        </div>
+        <button id="favorites-left-button-prod" class="favorites-left-button favorites-button" type="button" onclick="favoritesScroll(false, '-prod')" style="margin-left: -15px">
+        </button>
+        <button id="favorites-right-button-prod" class="favorites-right-button favorites-button" type="button" onclick="favoritesScroll(true, '-prod')" style="margin-right: -15px">
+        </button>
+        <script>
+            // Disable scroll right button if there are not enough elements
+            var container = document.getElementById('favorites-scroll-prod');
+            var num_children = container.childElementCount;
+            if (num_children <= 4 ||
+                container.scrollLeft == (container.scrollWidth - container.offsetWidth)) {
+                document.getElementById('favorites-right-button-prod').style.visibility = "hidden"
+            }
+        </script>
+    </div>
+
+    {% else %}
+
+    <h3> There are no pending applications at this time. </h3>
+
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,89 @@
+<!-- This template renders a page for someone to sign up as a cook. -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<script type="text/javascript">
+           function alertFilename()
+           {
+               var thefile = document.getElementById('image');
+               document.getElementById("proPic").innerHTML = thefile.value
+           }
+       </script>
+
+       <script type="text/javascript">
+                  function alertDocName()
+                  {
+                      var thefile = document.getElementById('documentation');
+                      document.getElementById("doc").innerHTML = thefile.value
+                  }
+              </script>
+    <div class="container">
+        <div class="row">
+        	<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+				<div class="card my-5 card-signin login-card">
+					<div class="card-body">
+						<h5 class="card-title text-center">Sign Up to Cook</h5>
+						<form method="post" action="." class="form-signin" enctype="multipart/form-data">
+							{% csrf_token %}
+							<div class="form-label-group">
+								<input type="text" id="first-name" name="first_name" class="form-control" placeholder="First Name" required autofocus>
+                <label class="input-box" for="first_name">First Name</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="text" id="last-name" name="last_name" class="form-control" placeholder="Last Name" required autofocus>
+                <label class="input-box" for="last_name">Last Name</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="email" id="email" name="email" class="form-control" placeholder="Email address" required autofocus>
+                <label class="input-box" for="email">Email address</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                <label class="input-box" for="password">Password</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="text" id="address" name="address" class="form-control" placeholder="Address" required autofocus>
+                <label class="input-box" for="address">Address</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="text" id="store-name" name="store_name" class="form-control" placeholder="Store Name" required autofocus>
+                <label class="input-box" for="store_name">Store Name</label>
+							</div>
+
+							<div class="form-label-group">
+								<input type="date" id="birthday" name="birthday" class="form-control" placeholder="Birthday" required autofocus>
+                <label class="input-box" for="birthday">Birthday</label>
+							</div>
+
+              <input type="button" id="loadProPic" class="btn btn-lg btn-primary btn-block text-uppercase green-button non-form-btn" value="Select Profile Picture" onclick="document.getElementById('image').click();" />
+              <p></p>
+              <text id="proPic">   </text>
+              <input style="display: none;" type="file" id="image" name="image" class="image-upload" onchange="alertFilename()" required autofocus>
+
+              <input type="button" id="loadDocument" class="btn btn-lg btn-primary btn-block text-uppercase green-button non-form-btn" value="Upload Documentation" onclick="document.getElementById('documentation').click();" />
+              <p></p>
+              <text id="doc">   </text>
+              <input style="display: none;" type="file" id="documentation" name="documentation" class="image-upload" onchange="alertDocName()" required autofocus>
+
+							<button class="btn btn-lg btn-primary btn-block text-uppercase green-button" type="submit" name="submit" value="Login">Sign up</button>
+              <hr class="my-4">
+
+						</form>
+
+            <button onclick="location.href='{% url 'consumer-signup' %}'" class="form-signin btn btn-lg btn-primary btn-block text-uppercase green-button non-form-btn">Sign Up to Eat</button>
+
+					</div>
+				</div>
+			</div>
+        </div>
+    </div>
+{% endblock %}

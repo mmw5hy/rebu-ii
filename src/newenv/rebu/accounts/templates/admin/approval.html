@@ -1,0 +1,38 @@
+<!-- This template renders a page for the admin to accept or deny specific producers that have applied to cook. -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="main-content">
+    </strong><h2> {{producer.get_short_name}}'s Application </h2></strong>
+    <br/>
+
+    <img src="{{ producer.image.url }}" style="max-width:20%;height: auto;">
+    <br/>
+
+    <h2> Store Name: {{producer.store_name}} </h2>
+    <br/>
+    <h2> Store Address: {{ producer.address}} </h2>
+    <br/>
+
+    <h2> Producer Documentation </h2>
+    <br/>
+
+    <embed src={{producer.documents.url}} width="800px" height="1100px" />
+
+    <div>
+        <form style="float: left;" action="" method="post">
+        <input type="submit" name="approve" value="Approve" class="btn btn-lg btn-primary green-button"/>
+      </form>
+
+      <form action="" method="post">
+      <input style="background-color: red;"type="submit" name="approve" value="Reject" class="btn btn-lg btn-primary green-button"/>
+    </form>
+    </div>
+</div>
+
+
+
+{% endblock %}

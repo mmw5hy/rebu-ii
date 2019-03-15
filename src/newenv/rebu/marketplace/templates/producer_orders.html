@@ -1,0 +1,112 @@
+<!-- This template renders a page with details about an order that was placed, with the ability for the cook to accept or deny the order. -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+	<div class="main-content">
+		{% if items %}
+			{% if confirm %}
+				<h3 id="order-title"> Items bought! </h3> 
+				<form action="{% url 'producer_confirm' order.id %}" method="post">
+					{% for item, count in items %}
+						<div class="item-container card">
+							<div class="item-container-image-parent">
+		                        <img class="item-container-image" src="{{ item.image.url }}">
+		                    </div>
+
+		                    <div class="item-container-description">
+		                        <span class="item-page-name">
+		                            {{ item.name }}
+		                            <span style="font-weight: 400;">
+		                                (${{ item.price }})
+		                            </span>
+		                        </span>
+		                        <br>
+		                        <span class="item-page-producer">
+		                            Quantity: {{ count }}
+		                        </span>
+		                        <br>
+		                        <p class="item-page-description">
+		                            {{ item.description }}
+		                        </p>
+		                        <p><b>Ingredients:</b> {{ item.ingredients }}</p>
+		                    </div>
+						</div>
+					{% endfor %}
+					<div id="fixed-btn-container">
+						<input type="submit" name="Confirm" class="btn btn-lg btn-primary green-button producer_order_btn" value="Confirm Order Delivery">
+					</div>
+				</form>
+			{% elif past %}
+				<h3 id="order-title"> Items bought! </h3> 
+				<form action="{% url 'producer_confirm' order.id %}" method="post">
+					{% for item, count in items %}
+						<div class="item-container card">
+							<div class="item-container-image-parent">
+		                        <img class="item-container-image" src="{{ item.image.url }}">
+		                    </div>
+
+		                    <div class="item-container-description">
+		                        <span class="item-page-name">
+		                            {{ item.name }}
+		                            <span style="font-weight: 400;">
+		                                (${{ item.price }})
+		                            </span>
+		                        </span>
+		                        <br>
+		                        <span class="item-page-producer">
+		                            Quantity: {{ count }}
+		                        </span>
+		                        <br>
+		                        <p class="item-page-description">
+		                            {{ item.description }}
+		                        </p>
+		                        <p><b>Ingredients:</b> {{ item.ingredients }}</p>
+		                    </div>
+						</div>
+					{% endfor %}
+				</form>
+			{% else %}
+
+				<h3 id="order-title"> Items bought! </h3> 
+				<form action="{% url 'producer_orders' order.id %}" method="post">
+					{% for item, count in items %}
+						<div class="item-container card">
+							<div class="item-container-image-parent">
+		                        <img class="item-container-image" src="{{ item.image.url }}">
+		                    </div>
+
+		                    <div class="item-container-description">
+		                        <span class="item-page-name">
+		                            {{ item.name }}
+		                            <span style="font-weight: 400;">
+		                                (${{ item.price }})
+		                            </span>
+		                        </span>
+		                        <br>
+		                        <span class="item-page-producer">
+		                            Quantity: {{ count }}
+		                        </span>
+		                        <br>
+		                        <p class="item-page-description">
+		                            {{ item.description }}
+		                        </p>
+		                        <p><b>Ingredients:</b> {{ item.ingredients }}</p>
+		                    </div>
+						</div>
+					{% endfor %}
+					<div id="fixed-btn-container">
+						<input type="submit" name="accept" class="btn btn-lg btn-primary green-button producer_order_btn" value="Accept Order">
+						<input type="submit" name="decline" class="btn btn-lg btn-primary green-button producer_order_btn" value="Decline Order">
+					</div>
+
+				</form>
+			{% endif %}
+		{% else %}
+	            There are no items in this order
+	    {% endif %}
+		<br>
+	</div>
+{% endblock %}
